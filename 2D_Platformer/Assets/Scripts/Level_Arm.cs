@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Level_Arm : MonoBehaviour
 {
-    private Finish finish;
+    private Finish _finish;
     private void Start()
     {
-        finish = GameObject.FindGameObjectWithTag("Finish").GetComponent<Finish>();//Передаём в новый экземпляр объекта ссылку на компонент с тэгом Finish.
+        _finish = GameObject.FindGameObjectWithTag("Finish").GetComponent<Finish>();//Передаём в новый экземпляр объекта ссылку на компонент с тэгом Finish.
     }
     public void ActivateLeverArm()
     {
-        finish.Activate();
+        _finish.Activate();
     }
 }

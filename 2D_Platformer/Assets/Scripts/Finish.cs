@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class Finish : MonoBehaviour
 {
-    private bool isActivated;// Переменная для обозначения активации рычага.
+    private bool _isActivated;// Переменная для обозначения активации рычага.
 
     public void Activate()
     {
-        isActivated = true;
+        _isActivated = true;
     }
     public void FinishLevel()
     {
-        if (isActivated)
+        if (_isActivated)
         {
             gameObject.SetActive(false);
         }

@@ -8,70 +8,70 @@ public class Player_Controller : MonoBehaviour
                                                 //При использовании [SerializeField] и private переменной - это значит, что другие скрипты не будут иметь доступа к данной переменной, кроме вынесенного поля в редакторе.
 
     [SerializeField] private Animator animator;// Получаем доступ к переменной аниматора.
-    private Rigidbody2D rb;
-    private Finish finish;
-    private Level_Arm level_Arm;
-    private bool isFinish = false;
+    private Rigidbody2D _rb;
+    private Finish _finish;
+    private Level_Arm _level_Arm;
+    private bool _isFinish = false;
 
-    private float horizontal = 0f;
-    private bool isGround = false; // Данная переменная говорит нам находится ли игрок на земле. 
-    private bool isJump = false; // Изначально мы говорим, что наш игрок не в прыжке.
-    private bool isFacingRight = true; // Переменная для последующего изменения flipa персонажа.
-    private bool isLevelArm = false;// Переменная для проверки является ли это рычагом или нет.
+    private float _horizontal = 0f;
+    private bool _isGround = false; // Данная переменная говорит нам находится ли игрок на земле. 
+    private bool _isJump = false; // Изначально мы говорим, что наш игрок не в прыжке.
+    private bool _isFacingRight = true; // Переменная для последующего изменения flipa персонажа.
+    private bool _isLevelArm = false;// Переменная для проверки является ли это рычагом или нет.
 
 
     const float speedXMultiplyer = 150f;
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        finish = GameObject.FindGameObjectWithTag("Finish").GetComponent<Finish>();// Передаем в finish объект с тэгом Finish.
-        level_Arm = FindObjectOfType<Level_Arm>();  //Поиск объекта на сцене с типом Level_Arm. При этом поиск происходит по всей иерархии на сцене, а не по определённым объектам.
+        _rb = GetComponent<Rigidbody2D>();
+        _finish = GameObject.FindGameObjectWithTag("Finish").GetComponent<Finish>();// Передаем в finish объект с тэгом Finish.
+        _level_Arm = FindObjectOfType<Level_Arm>();  //Поиск объекта на сцене с типом Level_Arm. При этом поиск происходит по всей иерархии на сцене, а не по определённым объектам.
     }
 
     void Update()// Вызывается каждый фрейм.
     {
-        horizontal = Input.GetAxis("Horizontal");//edit->project setting->input  -1 : 1
-        animator.SetFloat("speedX", Mathf.Abs(horizontal));//Вызываем переменную аниматор, SetFloat так как переменная float, далее указываем значение данного параметра horizontal.
-        if (Input.GetKey(KeyCode.W) && isGround) //Как только мы нажали на w isGround становиться false и не позволяет дать силу второй раз до того как опять не будет коллизий.
+        _horizontal = Input.GetAxis("Horizontal");//edit->project setting->input  -1 : 1
+        animator.SetFloat("speedX", Mathf.Abs(_horizontal));//Вызываем переменную аниматор, SetFloat так как переменная float, далее указываем значение данного параметра horizontal.
+        if (Input.GetKey(KeyCode.W) && _isGround) //Как только мы нажали на w isGround становиться false и не позволяет дать силу второй раз до того как опять не будет коллизий.
         {
-            isJump = true;
+            _isJump = true;
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
-            if (isFinish)
+            if (_isFinish)
             {
-                finish.FinishLevel();
+                _finish.FinishLevel();
             }
-            if (isLevelArm)
+            if (_isLevelArm)
             {
-                level_Arm.ActivateLeverArm();//Вызывем ф-цию финиш lvl из class Level_Arm
+                _level_Arm.ActivateLeverArm();//Вызывем ф-цию финиш lvl из class Level_Arm
             }
         }
     }
     void FixedUpdate()/*Все манипуляции с velocity(а также с физикой) происходят в FixedUpdate(обновляется не каждый frame, а по истечинию определённого интервала)
                         для просмотра чему равен данный интервал edit->project setting->time->fix time step */
     {
-        rb.velocity = new Vector2(horizontal * SpeedX * speedXMultiplyer * Time.fixedDeltaTime, rb.velocity.y);/*Для передачи скорости объекту каждый frame. rb.velocity.y(указываем сохранять нынешнюю скорость по вертикали)
+        _rb.velocity = new Vector2(_horizontal * SpeedX * speedXMultiplyer * Time.fixedDeltaTime, _rb.velocity.y);/*Для передачи скорости объекту каждый frame. rb.velocity.y(указываем сохранять нынешнюю скорость по вертикали)
                                                                                                                Также необходимо умножить Time.fixedDeltaTime (это время между вызовами данной функции) 
                                                                                                                т.к. FixedUpdate не константа, а иногда она зависит от мощности устройства.*/
-        if (isJump)
+        if (_isJump)
         {
-            rb.AddForce(new Vector2(0f, 500f));
-            isGround = false;
-            isJump = false;
+            _rb.AddForce(new Vector2(0f, 500f));
+            _isGround = false;
+            _isJump = false;
         }
-        if (horizontal > 0f && !isFacingRight)// Если horizontal > 0 поворачиваем персонажа вправо.
+        if (_horizontal > 0f && !_isFacingRight)// Если horizontal > 0 поворачиваем персонажа вправо.
         {
             Flip();
         }
-        else if (horizontal < 0f && isFacingRight)
+        else if (_horizontal < 0f && _isFacingRight)
         {
             Flip();
         }
 
         void Flip()// Чтобы не плодить код добавляем отдельный метод для разворота.
         {
-            isFacingRight = !isFacingRight;
+            _isFacingRight = !_isFacingRight;
             Vector3 playerScale = transform.localScale;// В данной переменной будет храниться Scale transform player. В данной строке нам доступно только чтение.
             playerScale.x *= -1;//Меняем значение с позитивного на негативное.
             transform.localScale = playerScale;
@@ -81,7 +81,7 @@ public class Player_Controller : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Ground"))
         {
-            isGround = true;
+            _isGround = true;
         }
     }
     private void OnTriggerEnter2D(Collider2D other)// Ф-ция служащая для возможности прохождения в Collider.
@@ -90,24 +90,24 @@ public class Player_Controller : MonoBehaviour
         if (other.CompareTag("Finish"))
         {
             Debug.Log("Worked");
-            isFinish = true;
+            _isFinish = true;
         }
         if (level_ArmTemp != null)
         {
-            isLevelArm = true;
+            _isLevelArm = true;
         }
     }
     private void OnTriggerExit2D(Collider2D other)
     {
         Level_Arm level_ArmTemp = other.GetComponent<Level_Arm>();
-        if (other.CompareTag("Finish") && isFinish)//Если мы ушли от Collider с тэгом Finish.
+        if (other.CompareTag("Finish") && _isFinish)//Если мы ушли от Collider с тэгом Finish.
         {
             Debug.Log("Not Worked");
-            isFinish = false;
+            _isFinish = false;
         }
         if (level_ArmTemp != null)
         {
-            isLevelArm = false;
+            _isLevelArm = false;
         }
     }
 
