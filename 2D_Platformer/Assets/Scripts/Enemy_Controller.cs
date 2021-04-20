@@ -9,15 +9,29 @@ public class Enemy_Controller : MonoBehaviour
     [SerializeField] private float TimeToWait = 5f;// Переменная отвечающая за ожидание между точками патрулирования.
 
     private Rigidbody2D _rb;
+    private Transform _playerTransform;//Переменная отвечает за позицию игрока.
     private Vector2 _LeftWalkPosition;// Правая крайняя точка патрулирования. 
     private Vector2 _RightWalkPosition;// Левая крайняя точка патрулирования.
+    private Vector2 _nextPoint;
 
     private bool _isFacingRight = true;// Переменная для отслеживания направления. Изначально повёрнут направо.
     private bool _isWait = false;
+    private bool _isChasingPlayer;//Переменная отвечающая за изменение режима из патруля в режим преследования.
     private float _waitTime; //Переменная ожидания после достижения крайней точки.
+
+    public bool IsfacingRight//С помощью данной ф-ции мы передаём значение в другие скрипты для чтения. 
+    {
+        get => _isFacingRight;
+    }
+
+    public void startChasingPlayer()//Ф-ция для преследования игрока после попадания в радиус агро. 
+    {
+        _isChasingPlayer = true;//Переводим врага в режим преследования.
+    }
 
     private void Start()
     {
+        _playerTransform = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();//Ищем transform c тэгом Player.
         _rb = GetComponent<Rigidbody2D>();
         _LeftWalkPosition = transform.position;// Будет равен изначальной точке врага.
         _RightWalkPosition = _LeftWalkPosition + Vector2.right * WalkDistance;//Высчитываем крайнюю точку правую, создавая новый вектор умножая его на дистанцию движения. 
@@ -38,17 +52,40 @@ public class Enemy_Controller : MonoBehaviour
 
     private void FixedUpdate()// Вся физика прописывается в FixedUpdate 
     {
-        Vector2 nextPoint = Vector2.right * WalkSpeed * Time.fixedDeltaTime;//Он идёт в правую сторону с положительной скоростью.
+        _nextPoint = Vector2.right * WalkSpeed * Time.fixedDeltaTime;//Он идёт в правую сторону с положительной скоростью.
         if (!_isFacingRight)// Если он не смотрит вправо то умножаем его scale на -1. разворачиваем.
         {
-            nextPoint.x *= -1;
+            _nextPoint.x *= -1;
         }
-        if (!_isWait)
+
+        if (_isChasingPlayer)
         {
-            _rb.MovePosition((Vector2)transform.position + nextPoint);/*Так как transform.position это Vector3 но мы приводим к Vector2 указывая Unity убрать значение z.
+            ChasePlayer();
+        }
+
+
+        if (!_isWait && !_isChasingPlayer)
+        {
+            Patrol();
+        }
+    }
+    private void Patrol()
+    {
+        _rb.MovePosition((Vector2)transform.position + _nextPoint);/*Так как transform.position это Vector3 но мы приводим к Vector2 указывая Unity убрать значение z.
                                                                                                         Также для оптимизации умножаем на Time.fixedDeltaTime (fixedDeltaTime т.к мы в FixedUpdate) чтобы          
                                                                                                         на всех платформах игра вела себя одинаково */
-        }
+    }
+
+    private void ChasePlayer()
+    {
+        float distance = _playerTransform.position.x - transform.position.x;/*Вычисление дистанции от нашего врага до нашего игрока, если Player находится справа от врага
+                                                                                 то distance будет положительным, если слева то distance будет отрицательным.*/
+
+
+        float multiplier = distance > 0 ? 1 : -1;//Если distance > 0 то присваиваем 1 , если меньше то -1.
+        _nextPoint *= multiplier;
+
+        _rb.MovePosition((Vector2)transform.position + _nextPoint);
     }
 
     private void Wait()//Также выводим в отдельную ф-цию.
