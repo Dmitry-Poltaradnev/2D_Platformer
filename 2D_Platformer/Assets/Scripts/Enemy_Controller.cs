@@ -7,6 +7,7 @@ public class Enemy_Controller : MonoBehaviour
     [SerializeField] private float WalkDistance = 6f;// Данная переменная отвечает за дистанцию которую будет проходить враг при патрулировании. 
     [SerializeField] private float WalkSpeed = 1f;// Скорость передвижения.
     [SerializeField] private float TimeToWait = 5f;// Переменная отвечающая за ожидание между точками патрулирования.
+    [SerializeField] private float _minDistanceToPlayer = 1.5f;//Переменная отвечающая за дистанцию преследования врага(если она меньше данного значения то враг должен стоять на месте).
 
     private Rigidbody2D _rb;
     private Transform _playerTransform;//Переменная отвечает за позицию игрока.
@@ -40,7 +41,7 @@ public class Enemy_Controller : MonoBehaviour
 
     private void Update()
     {
-        if (_isWait)//Логика таймера для последующего разворота врага.
+        if (_isWait && !_isChasingPlayer)//Логика таймера для последующего разворота врага, этом он не в режиме преследования.
         {
             Wait();
         }
@@ -53,9 +54,12 @@ public class Enemy_Controller : MonoBehaviour
     private void FixedUpdate()// Вся физика прописывается в FixedUpdate 
     {
         _nextPoint = Vector2.right * WalkSpeed * Time.fixedDeltaTime;//Он идёт в правую сторону с положительной скоростью.
-        if (!_isFacingRight)// Если он не смотрит вправо то умножаем его scale на -1. разворачиваем.
+
+        if (Mathf.Abs(DistanceToPlayer()) < _minDistanceToPlayer)/*Если положение игрока - положение по x врага меньше минимальной дистанции, то выходим из данной функции.
+                                                                   но так как по x значение может быть меньше 0 то нужно использовать метод Math.abs (возвращает абсолютное 
+                                                                   значение числа то есть если  значение -3 то вернёт 3*/
         {
-            _nextPoint.x *= -1;
+            return;
         }
 
         if (_isChasingPlayer)
@@ -71,6 +75,11 @@ public class Enemy_Controller : MonoBehaviour
     }
     private void Patrol()
     {
+        if (!_isFacingRight)// Если он не смотрит вправо то умножаем его scale на -1. разворачиваем.
+        {
+            _nextPoint.x *= -1;
+        }
+
         _rb.MovePosition((Vector2)transform.position + _nextPoint);/*Так как transform.position это Vector3 но мы приводим к Vector2 указывая Unity убрать значение z.
                                                                                                         Также для оптимизации умножаем на Time.fixedDeltaTime (fixedDeltaTime т.к мы в FixedUpdate) чтобы          
                                                                                                         на всех платформах игра вела себя одинаково */
@@ -78,14 +87,29 @@ public class Enemy_Controller : MonoBehaviour
 
     private void ChasePlayer()
     {
-        float distance = _playerTransform.position.x - transform.position.x;/*Вычисление дистанции от нашего врага до нашего игрока, если Player находится справа от врага
-                                                                                 то distance будет положительным, если слева то distance будет отрицательным.*/
+        float distance = DistanceToPlayer();/*Вычисление дистанции от нашего врага до нашего игрока, если Player находится справа от врага
+                                                                             то distance будет положительным, если слева то distance будет отрицательным.*/
 
 
-        float multiplier = distance > 0 ? 1 : -1;//Если distance > 0 то присваиваем 1 , если меньше то -1.
-        _nextPoint *= multiplier;
+        if (distance < 0)//Если distance > 0 то присваиваем 1 , если меньше то -1.
+        {
+            _nextPoint.x *= -1;
+        }
+        if (distance > 0.2 && !_isFacingRight)//Если Player находиться справа от врага, но он смотрит влево, то пусть он смотрит вправо.
+        {
+            Flip();
+        }
+        else if (distance < 0.2 && _isFacingRight)//Обратное условие верхнему.
+        {
+            Flip();
+        }
 
         _rb.MovePosition((Vector2)transform.position + _nextPoint);
+    }
+
+    private float DistanceToPlayer()//Ф-ция будет возвращать разница(дистанцию между transform.position)
+    {
+        return _playerTransform.position.x - transform.position.x;
     }
 
     private void Wait()//Также выводим в отдельную ф-цию.
