@@ -44,7 +44,7 @@ public class Enemy_Vision : MonoBehaviour
 
             if (currentHitObject.CompareTag("Player"))//Если это collider с тэгом Player.
             {
-                _enemy_Controller.startChasingPlayer();
+                _enemy_Controller.StartChasingPlayer();
             }
             else
             {

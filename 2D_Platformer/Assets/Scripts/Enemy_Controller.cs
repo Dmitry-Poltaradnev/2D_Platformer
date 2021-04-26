@@ -5,9 +5,12 @@ using UnityEngine;
 public class Enemy_Controller : MonoBehaviour
 {
     [SerializeField] private float WalkDistance = 6f;// Данная переменная отвечает за дистанцию которую будет проходить враг при патрулировании. 
-    [SerializeField] private float WalkSpeed = 1f;// Скорость передвижения.
+    [SerializeField] private float PatrolSpeed = 1f;// Скорость передвижения при патрулировании.
     [SerializeField] private float TimeToWait = 5f;// Переменная отвечающая за ожидание между точками патрулирования.
-    [SerializeField] private float _minDistanceToPlayer = 1.5f;//Переменная отвечающая за дистанцию преследования врага(если она меньше данного значения то враг должен стоять на месте).
+    [SerializeField] private float timeToChase = 3f;
+    [SerializeField] private float ChasingSpeed = 3f;//Скорость преследования игрока.
+    [SerializeField] private float MinDistanceToPlayer = 1.5f;//Переменная отвечающая за дистанцию преследования врага(если она меньше данного значения то враг должен стоять на месте).
+
 
     private Rigidbody2D _rb;
     private Transform _playerTransform;//Переменная отвечает за позицию игрока.
@@ -18,16 +21,22 @@ public class Enemy_Controller : MonoBehaviour
     private bool _isFacingRight = true;// Переменная для отслеживания направления. Изначально повёрнут направо.
     private bool _isWait = false;
     private bool _isChasingPlayer;//Переменная отвечающая за изменение режима из патруля в режим преследования.
+
+
+    private float _chaseTime;
     private float _waitTime; //Переменная ожидания после достижения крайней точки.
+    private float _walkSpeed;//Данная переменная будет отвечать за изменение скорости врага, Принимая значения PatrolSpeed либо ChasingSpeed. 
 
     public bool IsfacingRight//С помощью данной ф-ции мы передаём значение в другие скрипты для чтения. 
     {
         get => _isFacingRight;
     }
 
-    public void startChasingPlayer()//Ф-ция для преследования игрока после попадания в радиус агро. 
+    public void StartChasingPlayer()//Ф-ция для преследования игрока после попадания в радиус агро. 
     {
         _isChasingPlayer = true;//Переводим врага в режим преследования.
+        _chaseTime = timeToChase;//Каждый раз когда враг видит игрока, таймер обнуляется.
+        _walkSpeed = ChasingSpeed;
     }
 
     private void Start()
@@ -37,13 +46,20 @@ public class Enemy_Controller : MonoBehaviour
         _LeftWalkPosition = transform.position;// Будет равен изначальной точке врага.
         _RightWalkPosition = _LeftWalkPosition + Vector2.right * WalkDistance;//Высчитываем крайнюю точку правую, создавая новый вектор умножая его на дистанцию движения. 
         _waitTime = TimeToWait;// Приравниваем к переменной из редактора.
+        _chaseTime = timeToChase;
+        _walkSpeed = PatrolSpeed;//Изначально враг будет ходить со скоростью, PatrolSpeed.
     }
 
     private void Update()
     {
+        if (_isChasingPlayer)//При включении режима преследования, запускается таймер.
+        {
+            StartChasingTimer();
+        }
+
         if (_isWait && !_isChasingPlayer)//Логика таймера для последующего разворота врага, этом он не в режиме преследования.
         {
-            Wait();
+            StartWaitTimer();
         }
         if (ShouldWait())// Враг должен ждать.
         {
@@ -53,9 +69,9 @@ public class Enemy_Controller : MonoBehaviour
 
     private void FixedUpdate()// Вся физика прописывается в FixedUpdate 
     {
-        _nextPoint = Vector2.right * WalkSpeed * Time.fixedDeltaTime;//Он идёт в правую сторону с положительной скоростью.
+        _nextPoint = Vector2.right * _walkSpeed * Time.fixedDeltaTime;//Он идёт в правую сторону с положительной скоростью.
 
-        if (Mathf.Abs(DistanceToPlayer()) < _minDistanceToPlayer)/*Если положение игрока - положение по x врага меньше минимальной дистанции, то выходим из данной функции.
+        if (_isChasingPlayer && Mathf.Abs(DistanceToPlayer()) < MinDistanceToPlayer)/*Если положение игрока - положение по x врага меньше минимальной дистанции, то выходим из данной функции.
                                                                    но так как по x значение может быть меньше 0 то нужно использовать метод Math.abs (возвращает абсолютное 
                                                                    значение числа то есть если  значение -3 то вернёт 3*/
         {
@@ -112,7 +128,7 @@ public class Enemy_Controller : MonoBehaviour
         return _playerTransform.position.x - transform.position.x;
     }
 
-    private void Wait()//Также выводим в отдельную ф-цию.
+    private void StartWaitTimer()//Также выводим в отдельную ф-цию.
     {
         _waitTime -= Time.deltaTime;
         if (_waitTime < 0f)
@@ -120,6 +136,18 @@ public class Enemy_Controller : MonoBehaviour
             _waitTime = TimeToWait;
             _isWait = false;
             Flip();
+        }
+    }
+
+    private void StartChasingTimer()//Метод таймер преследования. Все таймеры вызываются в Update.
+    {
+        _chaseTime -= Time.deltaTime;
+
+        if (_chaseTime < 0)//Как только таймер истекает, преследование прекращается, то обратно переходим в режим патруля, и обнуляем таймер.
+        {
+            _isChasingPlayer = false;
+            _chaseTime = timeToChase;
+            _walkSpeed = PatrolSpeed;//После окончания таймера, скорость врага переходит обратно в PatrolSpeed.
         }
     }
 
