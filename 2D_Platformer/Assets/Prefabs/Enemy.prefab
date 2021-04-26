@@ -587,6 +587,7 @@ GameObject:
   - component: {fileID: 2243004819406847769}
   - component: {fileID: 2243004819406847768}
   - component: {fileID: 2243004819406847774}
+  - component: {fileID: 37043266}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -641,7 +642,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2244119337966205811}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -683,8 +684,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   WalkDistance: 6
-  WalkSpeed: 2
+  PatrolSpeed: 1
   TimeToWait: 2
+  timeToChase: 3
+  ChasingSpeed: 3
+  MinDistanceToPlayer: 1.5
+--- !u!114 &37043266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2244119337966205811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f5c9f0927e81cb4ba2e3ee227b88c87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentHitObject: {fileID: 0}
+  circleRadius: 0.5
+  maxDistance: 6
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &2244128471822906201
 GameObject:
   m_ObjectHideFlags: 0

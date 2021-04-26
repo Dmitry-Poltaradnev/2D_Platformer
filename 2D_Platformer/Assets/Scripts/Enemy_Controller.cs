@@ -71,7 +71,7 @@ public class Enemy_Controller : MonoBehaviour
     {
         _nextPoint = Vector2.right * _walkSpeed * Time.fixedDeltaTime;//Он идёт в правую сторону с положительной скоростью.
 
-        if (_isChasingPlayer && Mathf.Abs(DistanceToPlayer()) < MinDistanceToPlayer)/*Если положение игрока - положение по x врага меньше минимальной дистанции, то выходим из данной функции.
+         if (_isChasingPlayer && Mathf.Abs(DistanceToPlayer()) < MinDistanceToPlayer)/*Если положение игрока - положение по x врага меньше минимальной дистанции, то выходим из данной функции.
                                                                    но так как по x значение может быть меньше 0 то нужно использовать метод Math.abs (возвращает абсолютное 
                                                                    значение числа то есть если  значение -3 то вернёт 3*/
         {
