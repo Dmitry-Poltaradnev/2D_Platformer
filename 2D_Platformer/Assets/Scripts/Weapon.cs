@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
+    [SerializeField] private float damage = 20f;//Переменная определяющая кол-во damage.
     private Attack_Controller _attackController;//Добавляем объект со скрипта Attack_Controller
 
 
@@ -15,9 +16,10 @@ public class Weapon : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)//Данная ф-ция будет вызываться как только враг войдет в коллайдер оружия, проверяем является ли объект врагом либо нет.
     {
-        Enemy_Controller enemy_Controller = other.GetComponent<Enemy_Controller>();
-        if (enemy_Controller != null && _attackController.IsAttack)//Если мы попали в enemy_Controller и при этом мы нажали кнопку атаки, то 
+        Enemy_Health enemy_Health = other.GetComponent<Enemy_Health>();
+        if (enemy_Health != null && _attackController.IsAttack)//Если мы попали в enemy_Controller и при этом мы нажали кнопку атаки, то 
         {
+            enemy_Health.ReduceHealth(damage);
             Debug.Log("attack");
         }
     }
