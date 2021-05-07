@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Enemy_Controller : MonoBehaviour
 {
+    [SerializeField] private Transform enemyModelTransform;
     [SerializeField] private float WalkDistance = 6f;// Данная переменная отвечает за дистанцию которую будет проходить враг при патрулировании. 
     [SerializeField] private float PatrolSpeed = 1f;// Скорость передвижения при патрулировании.
     [SerializeField] private float TimeToWait = 5f;// Переменная отвечающая за ожидание между точками патрулирования.
@@ -71,7 +72,7 @@ public class Enemy_Controller : MonoBehaviour
     {
         _nextPoint = Vector2.right * _walkSpeed * Time.fixedDeltaTime;//Он идёт в правую сторону с положительной скоростью.
 
-         if (_isChasingPlayer && Mathf.Abs(DistanceToPlayer()) < MinDistanceToPlayer)/*Если положение игрока - положение по x врага меньше минимальной дистанции, то выходим из данной функции.
+        if (_isChasingPlayer && Mathf.Abs(DistanceToPlayer()) < MinDistanceToPlayer)/*Если положение игрока - положение по x врага меньше минимальной дистанции, то выходим из данной функции.
                                                                    но так как по x значение может быть меньше 0 то нужно использовать метод Math.abs (возвращает абсолютное 
                                                                    значение числа то есть если  значение -3 то вернёт 3*/
         {
@@ -168,8 +169,8 @@ public class Enemy_Controller : MonoBehaviour
     void Flip()//Метод для разворота врага, аналог разворота персонажа.
     {
         _isFacingRight = !_isFacingRight;
-        Vector3 playerScale = transform.localScale;
+        Vector3 playerScale = enemyModelTransform.localScale;
         playerScale.x *= -1;
-        transform.localScale = playerScale;
+        enemyModelTransform.localScale = playerScale;
     }
 }

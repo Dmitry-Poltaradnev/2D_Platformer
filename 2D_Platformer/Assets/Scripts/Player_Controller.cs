@@ -8,6 +8,7 @@ public class Player_Controller : MonoBehaviour
                                                 //При использовании [SerializeField] и private переменной - это значит, что другие скрипты не будут иметь доступа к данной переменной, кроме вынесенного поля в редакторе.
 
     [SerializeField] private Animator animator;// Получаем доступ к переменной аниматора.
+    [SerializeField] Transform playerModelTransform;// Переменная для последующего Flipa самой модели персонажа.
     private Rigidbody2D _rb;
     private Finish _finish;
     private Level_Arm _level_Arm;
@@ -72,9 +73,9 @@ public class Player_Controller : MonoBehaviour
         void Flip()// Чтобы не плодить код добавляем отдельный метод для разворота.
         {
             _isFacingRight = !_isFacingRight;
-            Vector3 playerScale = transform.localScale;// В данной переменной будет храниться Scale transform player. В данной строке нам доступно только чтение.
+            Vector3 playerScale = playerModelTransform.localScale;// В данной переменной будет храниться Scale transform model. В данной строке нам доступно только чтение.
             playerScale.x *= -1;//Меняем значение с позитивного на негативное.
-            transform.localScale = playerScale;
+            playerModelTransform.localScale = playerScale;
         }
     }
     void OnCollisionEnter2D(Collision2D other) //Указываем, что при коллизии двух коллайдеров. 
