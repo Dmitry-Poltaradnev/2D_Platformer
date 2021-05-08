@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Player_Health : MonoBehaviour
 {
-
+    [SerializeField] private GameObject gameObjectCanvas;//Добавляем объект canvas для включения menu после смерти персонажа. 
     [SerializeField] private Slider healthSlider;//Добавляем поле слайдера hp.
     [SerializeField] private Animator _animator;
     [SerializeField] private float _totalHealth = 200f;//Изначальное кол-во hp.
@@ -33,6 +33,7 @@ public class Player_Health : MonoBehaviour
     private void Die()
     {
         gameObject.SetActive(false);
+        gameObjectCanvas.SetActive(true);
     }
 
     private void InitHealth()
