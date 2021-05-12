@@ -12,6 +12,8 @@ public class Player_Controller : MonoBehaviour
     private Rigidbody2D _rb;
     private Finish _finish;
     private Level_Arm _level_Arm;
+    private AudioSource _jumpSound;//Получаем доступ к переменной AudioSource.
+
     private bool _isFinish = false;
 
     private float _horizontal = 0f;
@@ -27,6 +29,7 @@ public class Player_Controller : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _finish = GameObject.FindGameObjectWithTag("Finish").GetComponent<Finish>();// Передаем в finish объект с тэгом Finish.
         _level_Arm = FindObjectOfType<Level_Arm>();  //Поиск объекта на сцене с типом Level_Arm. При этом поиск происходит по всей иерархии на сцене, а не по определённым объектам.
+        _jumpSound = GetComponent<AudioSource>();//Передаём компонент AudioSource в переменную.
     }
 
     void Update()// Вызывается каждый фрейм.
@@ -36,6 +39,7 @@ public class Player_Controller : MonoBehaviour
         if (Input.GetKey(KeyCode.W) && _isGround) //Как только мы нажали на w isGround становиться false и не позволяет дать силу второй раз до того как опять не будет коллизий.
         {
             _isJump = true;
+            _jumpSound.Play();
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
