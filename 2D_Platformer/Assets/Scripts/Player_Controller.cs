@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player_Controller : MonoBehaviour
 {
-                                                
+
     [SerializeField] AudioSource jumpSound;//Получаем доступ к переменной AudioSource.
     [SerializeField] private Animator animator;// Получаем доступ к переменной аниматора.
     [SerializeField] Transform playerModelTransform;// Переменная для последующего Flipa самой модели персонажа.
@@ -35,7 +35,7 @@ public class Player_Controller : MonoBehaviour
     {
         _horizontal = Input.GetAxis("Horizontal");//edit->project setting->input  -1 : 1
         animator.SetFloat("speedX", Mathf.Abs(_horizontal));//Вызываем переменную аниматор, SetFloat так как переменная float, далее указываем значение данного параметра horizontal.
-        if (Input.GetKey(KeyCode.W) && _isGround) //Как только мы нажали на w isGround становиться false и не позволяет дать силу второй раз до того как опять не будет коллизий.
+        if (Input.GetKeyDown(KeyCode.W) && _isGround) //Как только мы нажали на w isGround становиться false и не позволяет дать силу второй раз до того как опять не будет коллизий.
         {
             _isJump = true;
             jumpSound.Play();
