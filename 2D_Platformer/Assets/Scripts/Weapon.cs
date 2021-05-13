@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
+    [SerializeField] private AudioSource enemyHitSound;
     [SerializeField] private float damage = 20f;//Переменная определяющая кол-во damage.
     private Attack_Controller _attackController;//Добавляем объект со скрипта Attack_Controller
 
@@ -21,6 +22,7 @@ public class Weapon : MonoBehaviour
         {
             enemy_Health.ReduceHealth(damage);
             Debug.Log("attack");
+            enemyHitSound.Play();
         }
     }
 }

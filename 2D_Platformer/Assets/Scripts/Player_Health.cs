@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Player_Health : MonoBehaviour
 {
+    [SerializeField] private AudioSource getDamageSounds;
     [SerializeField] private GameObject gameObjectCanvas;//Добавляем объект canvas для включения menu после смерти персонажа. 
     [SerializeField] private Slider healthSlider;//Добавляем поле слайдера hp.
     [SerializeField] private Animator _animator;
@@ -21,6 +22,7 @@ public class Player_Health : MonoBehaviour
 
     public void ReduceHealth(float damage)//Ф-ция для понижения хп принимает значение damage из скрипта Weapon.
     {
+        getDamageSounds.Play();
         _health -= damage;//При вызове ReduceHealth уменьшаем health.
         InitHealth();
         _animator.SetTrigger("takeDamage");

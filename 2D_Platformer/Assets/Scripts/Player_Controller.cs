@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class Player_Controller : MonoBehaviour
 {
-    [SerializeField] private float SpeedX = -1f;//Публичная переменная для последующего изменения скорости.
-                                                //При использовании [SerializeField] и private переменной - это значит, что другие скрипты не будут иметь доступа к данной переменной, кроме вынесенного поля в редакторе.
-
+                                                
+    [SerializeField] AudioSource jumpSound;//Получаем доступ к переменной AudioSource.
     [SerializeField] private Animator animator;// Получаем доступ к переменной аниматора.
     [SerializeField] Transform playerModelTransform;// Переменная для последующего Flipa самой модели персонажа.
+    [SerializeField] private float SpeedX = -1f;/*Публичная переменная для последующего изменения скорости.//При использовании [SerializeField] и private переменной - это значит, 
+                                                 что другие скрипты не будут иметь доступа к данной переменной, кроме вынесенного поля в редакторе.*/
     private Rigidbody2D _rb;
     private Finish _finish;
     private Level_Arm _level_Arm;
-    private AudioSource _jumpSound;//Получаем доступ к переменной AudioSource.
 
     private bool _isFinish = false;
 
@@ -28,8 +28,7 @@ public class Player_Controller : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _finish = GameObject.FindGameObjectWithTag("Finish").GetComponent<Finish>();// Передаем в finish объект с тэгом Finish.
-        _level_Arm = FindObjectOfType<Level_Arm>();  //Поиск объекта на сцене с типом Level_Arm. При этом поиск происходит по всей иерархии на сцене, а не по определённым объектам.
-        _jumpSound = GetComponent<AudioSource>();//Передаём компонент AudioSource в переменную.
+        _level_Arm = FindObjectOfType<Level_Arm>();  //Поиск объекта на сцене с типом Level_Arm. При этом поиск происходит по всей иерархии на сцене, а не по определённым объектам.        
     }
 
     void Update()// Вызывается каждый фрейм.
@@ -39,7 +38,7 @@ public class Player_Controller : MonoBehaviour
         if (Input.GetKey(KeyCode.W) && _isGround) //Как только мы нажали на w isGround становиться false и не позволяет дать силу второй раз до того как опять не будет коллизий.
         {
             _isJump = true;
-            _jumpSound.Play();
+            jumpSound.Play();
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
