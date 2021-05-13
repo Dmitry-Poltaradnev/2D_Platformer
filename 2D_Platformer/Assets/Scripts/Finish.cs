@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Finish : MonoBehaviour
 {
+    [SerializeField] private GameObject levelCompleteCanvas;
     private bool _isActivated;// Переменная для обозначения активации рычага.
 
     public void Activate()
@@ -14,6 +15,7 @@ public class Finish : MonoBehaviour
     {
         if (_isActivated)
         {
+            levelCompleteCanvas.SetActive(true);
             gameObject.SetActive(false);
         }
     }

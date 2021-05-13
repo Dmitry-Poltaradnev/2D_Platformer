@@ -11601,8 +11601,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1524178492}
-        m_TargetAssemblyTypeName: ChangeLevel, Assembly-CSharp
-        m_MethodName: NextLevelHandler
+        m_TargetAssemblyTypeName: PauseCanvas, Assembly-CSharp
+        m_MethodName: ContinueHandler
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -14505,7 +14505,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1524178491}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c1e364a0e9a35e47b498e0d12d32743, type: 3}
+  m_Script: {fileID: 11500000, guid: be5f1ff48bc5b4247bcc4d746370a7a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1524178493
@@ -15350,7 +15350,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aaab117a98a6e2f41a570f83b276b957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelCompleteCanvas: {fileID: 1524178491}
 --- !u!1 &1869805806
 GameObject:
   m_ObjectHideFlags: 0
