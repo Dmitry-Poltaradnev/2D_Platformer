@@ -9,5 +9,6 @@ public class ChangeLevel : MonoBehaviour
     {
         Scene scene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(scene.buildIndex + 1);
+        Time.timeScale = 1f;
     }
 }

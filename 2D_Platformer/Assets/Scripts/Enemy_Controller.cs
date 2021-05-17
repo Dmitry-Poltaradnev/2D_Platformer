@@ -10,8 +10,6 @@ public class Enemy_Controller : MonoBehaviour
     [SerializeField] private float TimeToWait = 5f;// Переменная отвечающая за ожидание между точками патрулирования.
     [SerializeField] private float timeToChase = 3f;
     [SerializeField] private float ChasingSpeed = 3f;//Скорость преследования игрока.
-    [SerializeField] private float MinDistanceToPlayer = 1.5f;//Переменная отвечающая за дистанцию преследования врага(если она меньше данного значения то враг должен стоять на месте).
-
 
     private Rigidbody2D _rb;
     private Transform _playerTransform;//Переменная отвечает за позицию игрока.
@@ -22,6 +20,7 @@ public class Enemy_Controller : MonoBehaviour
     private bool _isFacingRight = true;// Переменная для отслеживания направления. Изначально повёрнут направо.
     private bool _isWait = false;
     private bool _isChasingPlayer;//Переменная отвечающая за изменение режима из патруля в режим преследования.
+    private bool _collidedWithPlayer;//Переменная отвечающая за столкновение игрока и врага.
 
 
     private float _chaseTime;
@@ -68,11 +67,11 @@ public class Enemy_Controller : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()// Вся физика прописывается в FixedUpdate 
+    private void FixedUpdate()// Вся физика прописывается в FixedUpdate.
     {
         _nextPoint = Vector2.right * _walkSpeed * Time.fixedDeltaTime;//Он идёт в правую сторону с положительной скоростью.
 
-        if (_isChasingPlayer && Mathf.Abs(DistanceToPlayer()) < MinDistanceToPlayer)/*Если положение игрока - положение по x врага меньше минимальной дистанции, то выходим из данной функции.
+        if (_isChasingPlayer && _collidedWithPlayer)/*Если положение игрока - положение по x врага меньше минимальной дистанции, то выходим из данной функции.
                                                                    но так как по x значение может быть меньше 0 то нужно использовать метод Math.abs (возвращает абсолютное 
                                                                    значение числа то есть если  значение -3 то вернёт 3*/
         {
@@ -172,5 +171,22 @@ public class Enemy_Controller : MonoBehaviour
         Vector3 playerScale = enemyModelTransform.localScale;
         playerScale.x *= -1;
         enemyModelTransform.localScale = playerScale;
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)//При соприкосновении коллайдеров врага и игрока, то мы останавливаем врага.
+    {
+        Player_Controller player = other.gameObject.GetComponent<Player_Controller>();
+        if (player != null)//Если коллайдер принадлежит игроку.
+        {
+            _collidedWithPlayer = true;
+        }
+    }
+    private void OnCollisionExit2D(Collision2D other)//Если коллайдеры больше не соприкасаются, то враг продолжает движение по маршруту.
+    {
+        Player_Controller player = other.gameObject.GetComponent<Player_Controller>();
+        if (player != null)//Если коллайдер принадлежит игроку.
+        {
+            _collidedWithPlayer = false;
+        }
     }
 }
