@@ -10,9 +10,11 @@ public class Player_Controller : MonoBehaviour
     [SerializeField] Transform playerModelTransform;// Переменная для последующего Flipa самой модели персонажа.
     [SerializeField] private float SpeedX = -1f;/*Публичная переменная для последующего изменения скорости.//При использовании [SerializeField] и private переменной - это значит, 
                                                  что другие скрипты не будут иметь доступа к данной переменной, кроме вынесенного поля в редакторе.*/
+
     private Rigidbody2D _rb;
     private Finish _finish;
     private Level_Arm _level_Arm;
+    private FixedJoystick _fixedJoystick;//Поле для компонента джойстика.
 
     private bool _isFinish = false;
 
@@ -28,28 +30,22 @@ public class Player_Controller : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _finish = GameObject.FindGameObjectWithTag("Finish").GetComponent<Finish>();// Передаем в finish объект с тэгом Finish.
+        _fixedJoystick = GameObject.FindGameObjectWithTag("FixedJoystick").GetComponent<FixedJoystick>();
         _level_Arm = FindObjectOfType<Level_Arm>();  //Поиск объекта на сцене с типом Level_Arm. При этом поиск происходит по всей иерархии на сцене, а не по определённым объектам.        
     }
 
     void Update()// Вызывается каждый фрейм.
     {
-        _horizontal = Input.GetAxis("Horizontal");//edit->project setting->input  -1 : 1
+        //_horizontal = Input.GetAxis("Horizontal");//edit->project setting->input  -1 : 1
+        _horizontal = _fixedJoystick.Horizontal;//фун-ция для джойстика.
         animator.SetFloat("speedX", Mathf.Abs(_horizontal));//Вызываем переменную аниматор, SetFloat так как переменная float, далее указываем значение данного параметра horizontal.
-        if (Input.GetKeyDown(KeyCode.W) && _isGround) //Как только мы нажали на w isGround становиться false и не позволяет дать силу второй раз до того как опять не будет коллизий.
+        if (Input.GetKeyDown(KeyCode.W)) //Как только мы нажали на w isGround становиться false и не позволяет дать силу второй раз до того как опять не будет коллизий.
         {
-            _isJump = true;
-            jumpSound.Play();
+            Jump();
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
-            if (_isFinish)
-            {
-                _finish.FinishLevel();
-            }
-            if (_isLevelArm)
-            {
-                _level_Arm.ActivateLeverArm();//Вызывем ф-цию финиш lvl из class Level_Arm
-            }
+            Interact();
         }
     }
     void FixedUpdate()/*Все манипуляции с velocity(а также с физикой) происходят в FixedUpdate(обновляется не каждый frame, а по истечинию определённого интервала)
@@ -79,6 +75,26 @@ public class Player_Controller : MonoBehaviour
             Vector3 playerScale = playerModelTransform.localScale;// В данной переменной будет храниться Scale transform model. В данной строке нам доступно только чтение.
             playerScale.x *= -1;//Меняем значение с позитивного на негативное.
             playerModelTransform.localScale = playerScale;
+        }
+    }
+    public void Jump()//Метод для кнопки jump.
+    {
+        if (_isGround)
+        {
+            _isJump = true;
+            jumpSound.Play();
+        }
+    }
+
+    public void Interact()//Метод взаимодействия кнопки с Level arm. 
+    {
+        if (_isFinish)
+        {
+            _finish.FinishLevel();
+        }
+        if (_isLevelArm)
+        {
+            _level_Arm.ActivateLeverArm();//Вызывем ф-цию финиш lvl из class Level_Arm
         }
     }
     void OnCollisionEnter2D(Collision2D other) //Указываем, что при коллизии двух коллайдеров. 

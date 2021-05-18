@@ -9,7 +9,7 @@ public class Attack_Controller : MonoBehaviour
 
     private bool _isAttack;
     public bool IsAttack { get => _isAttack; }//Передаём переменную через публичный метод.
-   
+
 
     public void FinishAttak()//Метод для завершения атаки.
     {
@@ -18,14 +18,21 @@ public class Attack_Controller : MonoBehaviour
 
 
 
-    private void Update()
+    //private void Update()//Данное ф-ция для управления клавиатурой.
+    //{
+    //    if (Input.GetMouseButtonDown(0))
+    //    {
+    //        _isAttack = true;
+    //        animator.SetTrigger("Attack");
+    //        attackSound.Play();
+    //    }
+    //}
+
+    public void Attack()//Метод для управления джойстиком.
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            _isAttack = true;
-            animator.SetTrigger("Attack");
-            attackSound.Play();
-        }
+        _isAttack = true;
+        animator.SetTrigger("Attack");
+        attackSound.Play();
     }
 
 }
